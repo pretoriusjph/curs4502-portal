@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CURS4502 Student Portal - Natural Sciences & Technology Education</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        #root {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .app-container {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            color: white;
+            padding: 30px 40px;
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            min-height: 600px;
+        }
+        
+        .sidebar {
+            background: #f8fafc;
+            border-right: 1px solid #e2e8f0;
+            padding: 24px 0;
+        }
+        
+        .nav-item {
+            padding: 12px 24px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+            font-weight: 500;
+            color: #475569;
+        }
+        
+        .nav-item:hover {
+            background: #e2e8f0;
+            color: #1e293b;
+        }
+        
+        .nav-item.active {
+            background: #dbeafe;
+            border-left-color: #3b82f6;
+            color: #1e40af;
+        }
+        
+        .content-area {
+            padding: 40px;
+            overflow-y: auto;
+            max-height: 80vh;
+        }
+        
+        .section-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #3b82f6;
+            padding-bottom: 10px;
+        }
+        
+        .card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .card h3 {
+            color: #1e40af;
+            margin-bottom: 12px;
+            font-size: 18px;
+        }
+        
+        .card p, .card li {
+            color: #475569;
+            line-height: 1.6;
+            margin-bottom: 8px;
+        }
+        
+        .week-card {
+            border-left: 4px solid #3b82f6;
+            margin-bottom: 16px;
+        }
+        
+        .week-number {
+            font-size: 14px;
+            font-weight: 600;
+            color: #3b82f6;
+            margin-bottom: 8px;
+        }
+        
+        .chat-container {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 24px;
+            min-height: 500px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            padding: 16px;
+            background: white;
+            border-radius: 8px;
+        }
+        
+        .message {
+            margin-bottom: 16px;
+            padding: 12px 16px;
+            border-radius: 8px;
+            max-width: 80%;
+        }
+        
+        .message.user {
+            background: #3b82f6;
+            color: white;
+            margin-left: auto;
+        }
+        
+        .message.assistant {
+            background: #e2e8f0;
+            color: #1e293b;
+        }
+        
+        .chat-input-container {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .chat-input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        
+        .chat-input:focus {
+            border-color: #3b82f6;
+        }
+        
+        .chat-button {
+            padding: 12px 24px;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .chat-button:hover {
+            background: #2563eb;
+        }
+        
+        .assignment-card {
+            border-left: 4px solid #f59e0b;
+            background: #fffbeb;
+        }
+        
+        .due-date {
+            color: #dc2626;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .reading-list {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .reading-item {
+            padding: 12px;
+            background: #f8fafc;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            border-left: 3px solid #8b5cf6;
+        }
+        
+        .quick-links {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-top: 20px;
+        }
+        
+        .quick-link-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .quick-link-card:hover {
+            transform: translateY(-4px);
+        }
+        
+        .faq-item {
+            margin-bottom: 16px;
+        }
+        
+        .faq-question {
+            font-weight: 600;
+            color: #1e40af;
+            cursor: pointer;
+            padding: 12px;
+            background: #dbeafe;
+            border-radius: 6px;
+            margin-bottom: 8px;
+        }
+        
+        .faq-answer {
+            padding: 12px;
+            background: #f8fafc;
+            border-radius: 6px;
+            color: #475569;
+        }
+        
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+        }
+        
+        .timeline-item {
+            position: relative;
+            padding-bottom: 24px;
+        }
+        
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -30px;
+            top: 0;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #3b82f6;
+        }
+        
+        .timeline-item::after {
+            content: '';
+            position: absolute;
+            left: -24px;
+            top: 12px;
+            width: 2px;
+            height: 100%;
+            background: #e2e8f0;
+        }
+        
+        .timeline-item:last-child::after {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+        
+        const courseData = {
+            moduleInfo: {
+                code: "CURS4502",
+                name: "Intermediate Phase School Curriculum 2",
+                credits: 8,
+                nqfLevel: 6,
+                department: "Mathematics, Natural Sciences, and Technology Education",
+                lecturer: "Prof. J.P.H. Pretorius",
+                email: "pretoriusjph@ufs.ac.za",
+                phone: "051 401 3340",
+                description: "This module is an eight-credit adventure focusing on Natural Sciences and Technology Education for Grades 4-7. You'll engage in activities that require you to apply and integrate your knowledge in real-world situations."
+            },
+            
+            learningUnits: [
+                {
+                    number: 1,
+                    title: "Lesson Planning",
+                    topics: ["What is a lesson plan?", "Importance of lesson plans", "Discussion of UFS lesson plans"],
+                    outcomes: ["Understand the structure of effective lesson plans", "Apply lesson planning principles to Natural Sciences & Technology"]
+                },
+                {
+                    number: 2,
+                    title: "Integration of ICT in Natural Sciences and Technology Curricula",
+                    topics: ["Mobile learning theory", "Teaching with Technology", "21st Century Teacher", "Instructional Deliveries", "Results vs Process Orientated Thinking"],
+                    outcomes: ["Integrate technology effectively in lesson delivery", "Understand mobile learning applications in education"]
+                },
+                {
+                    number: 3,
+                    title: "Assessments in Natural Sciences and Technology Education",
+                    topics: ["Multiple Intelligences", "Blooms Taxonomy", "Assessment for learning", "Types of Assessment", "Asking Questions", "Types of Questions", "Tools for Questioning", "Visual Aids"],
+                    outcomes: ["Design effective assessments", "Apply Multiple Intelligences in teaching", "Use questioning techniques effectively"]
+                },
+                {
+                    number: 4,
+                    title: "Natural Sciences and Technology Content Focus Areas",
+                    topics: ["Technology Frameworks", "Pedagogical Content Knowledge", "Good Teaching", "Pedagogical Action Reason Model"],
+                    outcomes: ["Demonstrate pedagogical content knowledge", "Apply technology frameworks in teaching"]
+                },
+                {
+                    number: 5,
+                    title: "Natural Sciences and Technology Teaching Philosophy",
+                    topics: ["Teaching Philosophy", "General guidelines for Teaching Philosophy"],
+                    outcomes: ["Develop personal teaching philosophy", "Articulate educational values and beliefs"]
+                }
+            ],
+            
+            schedule: [
+                { week: 1, date: "09/02/2026", theme: "Course Orientation", activity: "Familiarise with CAPS and UFS lesson plan template" },
+                { week: 2, date: "16/02/2026", theme: "Learning Unit 1 - Lesson Planning", activity: "Group assignment: Design lesson plan with presentation", dueDate: "05 March 2026" },
+                { week: 3, date: "23/02/2026", theme: "Learning Unit 2 - Mobile Learning Theory", activity: "Read Multiple Intelligences articles" },
+                { week: 4, date: "02/03/2026", theme: "Learning Unit 3 - Multiple Intelligences", activity: "Read Assessment for Learning principles" },
+                { week: 5, date: "09/03/2026", theme: "Learning Unit 3 - Assessment for Learning", activity: "Assignment 2: Define multiple intelligences" },
+                { week: 6, date: "16/03/2026", theme: "Learning Unit 3 - Types of Questions", activity: "Read Blended Learning article" },
+                { week: 7, date: "23/03/2026", theme: "Learning Unit 4 - Blended Learning", activity: "Read Pedagogical Content Knowledge article" },
+                { week: 8, date: "13/04/2026", theme: "Learning Unit 4 - Technology Frameworks", activity: "Prepare for test" },
+                { week: 9, date: "20/04/2026", theme: "Test 1", activity: "10h00-12h00, Venue TBC" },
+                { week: 10, date: "27/04/2026", theme: "Test Feedback", activity: "" },
+                { week: 11, date: "04/05/2026", theme: "Learning Unit 4 - Good Teaching", activity: "Research educational tools" },
+                { week: 12, date: "11/05/2026", theme: "Learning Unit 4 - Pedagogical Action", activity: "Assignment 3: Educational technology demo", dueDate: "12 May 2026" },
+                { week: 16, date: "12/10/2026", theme: "Learning Unit 5 - Teaching Philosophy", activity: "Feedback from teaching practice" },
+                { week: 17, date: "19/10/2026", theme: "Query Session", activity: "Final questions before exams" }
+            ],
+            
+            assessments: [
+                {
+                    name: "Assignment 1",
+                    type: "Group",
+                    description: "Design one lesson plan on a given topic within CAPS: Natural Sciences and Technology. Must contain 10-slide engaging presentation. Canva may not be used.",
+                    weight: "20%",
+                    marks: 30,
+                    dueDate: "05 March 2026"
+                },
+                {
+                    name: "Test",
+                    type: "Individual",
+                    description: "Written summative test covering Learning Units 1-4",
+                    weight: "50%",
+                    marks: 65,
+                    dueDate: "20 April 2026"
+                },
+                {
+                    name: "Assignment 2",
+                    type: "Individual",
+                    description: "Use educational technology to demonstrate how Natural Sciences and Technology Education can be taught in intermediate phase",
+                    weight: "30%",
+                    marks: 30,
+                    dueDate: "12 May 2026"
+                }
+            ],
+            
+            readings: [
+                "Broadfoot P, et al. (2002) Assessment for Learning: 10 Principles",
+                "Brooke, E. (2015). Four keys to success using blended learning implementation models",
+                "CAPS: Technology (Grades 4-6)",
+                "Gray, K. C., & Waggoner, J. E. (2002). Multiple intelligences meet Bloom's taxonomy",
+                "Goundar, M. S. & Kumar, B. A. (2021). Mobile learning applications in higher education",
+                "Marshall, S.P. (2010). Re-imagining specialized STEM academies",
+                "Shing, C. L., et al. (2015). Pedagogical Content Knowledge (PCK)",
+                "Stanford, P. (2003). Multiple intelligence for every classroom"
+            ],
+            
+            faqs: [
+                {
+                    question: "Is this module examinable?",
+                    answer: "No, this is a non-examinable module. All assessments (assignments and test) are compulsory."
+                },
+                {
+                    question: "What if I miss a class?",
+                    answer: "All sessions are compulsory. If you miss a class, it's your responsibility to catch up on the work missed and you must email the lecturer to notify them."
+                },
+                {
+                    question: "Can I get an extension on assignments?",
+                    answer: "Due dates are final. Submission boxes open before the due date to allow early submission. Extensions only granted with medical/cultural letters. Network issues and loadshedding are not valid excuses."
+                },
+                {
+                    question: "Can I use AI tools for assignments?",
+                    answer: "Do not copy answers from AI tools and claim as your own. Use multiple AI tools to enhance understanding and synthesize your answers. Direct copying is plagiarism and results in a 0."
+                },
+                {
+                    question: "How do group assignments work?",
+                    answer: "For group assignments, all group members must participate. If you don't engage with the content, you receive 0 for the activity."
+                },
+                {
+                    question: "How long do I have to query my marks?",
+                    answer: "You have 5 working days (Monday-Friday, 07h45-16h30, excluding holidays) after marks are released to confirm or query them. After this, marks are final."
+                }
+            ]
+        };
+        
+        function App() {
+            const [activeSection, setActiveSection] = useState('overview');
+            const [chatMessages, setChatMessages] = useState([
+                {
+                    type: 'assistant',
+                    text: "👋 Hello! I'm your CURS4502 AI tutor. Ask me anything about the module, assignments, schedule, or Natural Sciences & Technology Education!"
+                }
+            ]);
+            const [inputMessage, setInputMessage] = useState('');
+            
+            const handleSendMessage = () => {
+                if (!inputMessage.trim()) return;
+                
+                // Add user message
+                const newMessages = [...chatMessages, { type: 'user', text: inputMessage }];
+                setChatMessages(newMessages);
+                
+                // Generate AI response based on keywords
+                setTimeout(() => {
+                    const response = generateResponse(inputMessage.toLowerCase());
+                    setChatMessages([...newMessages, { type: 'assistant', text: response }]);
+                }, 500);
+                
+                setInputMessage('');
+            };
+            
+            const generateResponse = (query) => {
+                // Simple keyword-based responses
+                if (query.includes('assignment') || query.includes('due')) {
+                    return `📝 **Assignment Information:**\n\n**Assignment 1 (20%):** Group lesson plan + presentation. Due: 05 March 2026\n\n**Assignment 2 (30%):** Individual educational technology demo. Due: 12 May 2026\n\n**Test (50%):** Individual written test. Date: 20 April 2026\n\nRemember: All assessments are compulsory. No extensions without medical letters!`;
+                }
+                
+                if (query.includes('lesson plan')) {
+                    return `📋 **Lesson Planning Tips:**\n\n1. Use the UFS lesson plan template (see Appendix A)\n2. Include clear learning objectives with active verbs\n3. Address 2 of the 7 General Aims\n4. Specify SKAV (Skills, Knowledge, Attitudes, Values)\n5. Include assessment strategies\n6. Plan for inclusive strategies\n\nCheck out Learning Unit 1 materials on Blackboard!`;
+                }
+                
+                if (query.includes('test') || query.includes('exam')) {
+                    return `📚 **Test Information:**\n\n**Test 1:** 20 April 2026, 10h00-12h00\n- Worth 50% of module mark (65 marks)\n- Covers Learning Units 1-4\n- Written summative assessment\n- Venue: TBC\n\n**Special Test:** 18 May 2026 (permission required)\n\nThis is a non-examinable module, so tests and assignments are your final marks!`;
+                }
+                
+                if (query.includes('plagiarism') || query.includes('ai')) {
+                    return `⚠️ **Academic Integrity:**\n\nPlagiarism results in 0 for the assignment. This includes:\n- Copying from AI tools without synthesizing\n- Sharing your work with friends\n- Submitting identical work\n\n✅ **Acceptable:** Using multiple AI tools to enhance understanding and creating your own synthesized answers\n\n❌ **Not Acceptable:** Copy-pasting AI responses as your own work`;
+                }
+                
+                if (query.includes('caps') || query.includes('curriculum')) {
+                    return `📖 **CAPS Information:**\n\nThe Curriculum and Assessment Policy Statement (CAPS) for Natural Sciences and Technology (Grades 4-6) is fundamental to this module.\n\n**Key aspects:**\n- Specific aims for NS&T Education\n- Content focus areas\n- Assessment guidelines\n- Integration of knowledge strands\n\nFamiliarize yourself with the CAPS document - it's available on Blackboard and essential for your lesson planning!`;
+                }
+                
+                if (query.includes('technology') || query.includes('ict')) {
+                    return `💻 **ICT Integration:**\n\nLearning Unit 2 covers:\n- Mobile learning theory\n- 21st century teaching skills\n- Educational technology tools\n\nAssignment 2 requires you to demonstrate an educational technology tool for teaching NS&T. Research various tools that align with the CAPS curriculum!\n\nSome areas to explore:\n- Interactive simulations\n- Virtual labs\n- Educational apps\n- Collaborative platforms`;
+                }
+                
+                if (query.includes('contact') || query.includes('email')) {
+                    return `📧 **Contact Information:**\n\n**Lecturer:** Prof. J.P.H. Pretorius\n**Email:** pretoriusjph@ufs.ac.za\n**Phone:** 051 401 3340\n**Campus:** Bloemfontein\n\n**Available via appointment**\n\nFor questions, first check Blackboard announcements and the study guide. Email with specific questions after reviewing available materials.`;
+                }
+                
+                if (query.includes('schedule') || query.includes('week') || query.includes('when')) {
+                    return `📅 **Module Schedule Highlights:**\n\n- Week 2 (16 Feb): Assignment 1 introduction\n- Week 9 (20 Apr): Test 1\n- Week 12 (11 May): Assignment 2 due\n- Teaching Practice: 21 July - 09 Oct\n- Exams: 26 Nov - 21 Nov\n\nCheck the Schedule tab for complete weekly breakdown!`;
+                }
+                
+                if (query.includes('group') || query.includes('team')) {
+                    return `👥 **Group Work Guidelines:**\n\nAssignment 1 is a group assignment (5-7 students).\n\n**Important:**\n- All group members MUST participate\n- Failure to engage = 0 for activity\n- Do NOT share your work with other groups\n- Each group submits ONE lesson plan + presentation\n\nChoose reliable team members and communicate early!`;
+                }
+                
+                // Default response
+                return `I can help you with:\n\n- 📝 Assignments and due dates\n- 📚 Test information\n- 📋 Lesson planning guidance\n- 💻 ICT integration\n- 📖 CAPS curriculum\n- 📅 Module schedule\n- 📧 Contact information\n- ⚠️ Plagiarism policies\n\nWhat would you like to know more about?`;
+            };
+            
+            const renderContent = () => {
+                switch(activeSection) {
+                    case 'overview':
+                        return <OverviewSection />;
+                    case 'schedule':
+                        return <ScheduleSection />;
+                    case 'assessments':
+                        return <AssessmentsSection />;
+                    case 'learning-units':
+                        return <LearningUnitsSection />;
+                    case 'resources':
+                        return <ResourcesSection />;
+                    case 'faq':
+                        return <FAQSection />;
+                    case 'ai-tutor':
+                        return (
+                            <div className="chat-container">
+                                <h2 className="section-title">🤖 AI Tutor</h2>
+                                <div className="chat-messages">
+                                    {chatMessages.map((msg, idx) => (
+                                        <div key={idx} className={`message ${msg.type}`}>
+                                            {msg.text}
+                                        </div>
+                                    ))}
+                                </div>
+                                <div className="chat-input-container">
+                                    <input 
+                                        type="text" 
+                                        className="chat-input"
+                                        placeholder="Ask me anything about CURS4502..."
+                                        value={inputMessage}
+                                        onChange={(e) => setInputMessage(e.target.value)}
+                                        onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                                    />
+                                    <button className="chat-button" onClick={handleSendMessage}>
+                                        Send
+                                    </button>
+                                </div>
+                            </div>
+                        );
+                    default:
+                        return <OverviewSection />;
+                }
+            };
+            
+            return (
+                <div className="app-container">
+                    <div className="header">
+                        <h1>{courseData.moduleInfo.code}: {courseData.moduleInfo.name}</h1>
+                        <p>{courseData.moduleInfo.credits} Credits | NQF Level {courseData.moduleInfo.nqfLevel} | {courseData.moduleInfo.department}</p>
+                    </div>
+                    
+                    <div className="main-content">
+                        <div className="sidebar">
+                            <div className={`nav-item ${activeSection === 'overview' ? 'active' : ''}`} onClick={() => setActiveSection('overview')}>
+                                📊 Overview
+                            </div>
+                            <div className={`nav-item ${activeSection === 'schedule' ? 'active' : ''}`} onClick={() => setActiveSection('schedule')}>
+                                📅 Schedule
+                            </div>
+                            <div className={`nav-item ${activeSection === 'assessments' ? 'active' : ''}`} onClick={() => setActiveSection('assessments')}>
+                                📝 Assessments
+                            </div>
+                            <div className={`nav-item ${activeSection === 'learning-units' ? 'active' : ''}`} onClick={() => setActiveSection('learning-units')}>
+                                📚 Learning Units
+                            </div>
+                            <div className={`nav-item ${activeSection === 'resources' ? 'active' : ''}`} onClick={() => setActiveSection('resources')}>
+                                📖 Resources
+                            </div>
+                            <div className={`nav-item ${activeSection === 'faq' ? 'active' : ''}`} onClick={() => setActiveSection('faq')}>
+                                ❓ FAQ
+                            </div>
+                            <div className={`nav-item ${activeSection === 'ai-tutor' ? 'active' : ''}`} onClick={() => setActiveSection('ai-tutor')}>
+                                🤖 AI Tutor
+                            </div>
+                        </div>
+                        
+                        <div className="content-area">
+                            {renderContent()}
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+        
+        function OverviewSection() {
+            return (
+                <div>
+                    <h2 className="section-title">Module Overview</h2>
+                    
+                    <div className="card">
+                        <h3>📚 Welcome to CURS4502!</h3>
+                        <p>{courseData.moduleInfo.description}</p>
+                    </div>
+                    
+                    <div className="card">
+                        <h3>👨‍🏫 Lecturer Information</h3>
+                        <p><strong>Lecturer:</strong> {courseData.moduleInfo.lecturer}</p>
+                        <p><strong>Email:</strong> {courseData.moduleInfo.email}</p>
+                        <p><strong>Phone:</strong> {courseData.moduleInfo.phone}</p>
+                        <p><strong>Availability:</strong> By appointment</p>
+                    </div>
+                    
+                    <div className="card">
+                        <h3>🎯 Module Objectives</h3>
+                        <p>On completion of this module, you will be able to:</p>
+                        <ul style={{marginLeft: '20px', marginTop: '12px'}}>
+                            <li>Demonstrate and apply basic pedagogical content knowledge in the Intermediate Phase</li>
+                            <li>Teach Natural Sciences and Technology in grades 4-7</li>
+                            <li>Integrate knowledge into other subjects in the Intermediate Phase</li>
+                            <li>Pursue further studies in Natural Sciences and Technology Education</li>
+                        </ul>
+                    </div>
+                    
+                    <div className="card">
+                        <h3>⚠️ Important Policies</h3>
+                        <ul style={{marginLeft: '20px'}}>
+                            <li>All sessions are compulsory - notify lecturer if you miss class</li>
+                            <li>NO additional opportunities for missed class activities</li>
+                            <li>Submit assignments before due dates - no extensions without medical letters</li>
+                            <li>5 working days to query marks after release</li>
+                            <li>Plagiarism (including AI misuse) results in 0 for assignment</li>
+                        </ul>
+                    </div>
+                    
+                    <div className="quick-links">
+                        <div className="quick-link-card" onClick={() => window.open('https://www.ufs.ac.za', '_blank')}>
+                            <h3>🌐 UFS Website</h3>
+                            <p>University Resources</p>
+                        </div>
+                        <div className="quick-link-card" onClick={() => alert('Access Blackboard through your UFS portal')}>
+                            <h3>📱 Blackboard</h3>
+                            <p>Course Materials</p>
+                        </div>
+                        <div className="quick-link-card" onClick={() => alert('Email: pretoriusjph@ufs.ac.za')}>
+                            <h3>📧 Contact Lecturer</h3>
+                            <p>Get Help</p>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+        
+        function ScheduleSection() {
+            return (
+                <div>
+                    <h2 className="section-title">📅 Module Schedule 2026</h2>
+                    
+                    <div className="timeline">
+                        {courseData.schedule.map((item, idx) => (
+                            <div key={idx} className="timeline-item">
+                                <div className="card week-card">
+                                    <div className="week-number">Week {item.week} - {item.date}</div>
+                                    <h3>{item.theme}</h3>
+                                    <p>{item.activity}</p>
+                                    {item.dueDate && <p className="due-date">📌 Due: {item.dueDate}</p>}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                    
+                    <div className="card" style={{marginTop: '24px', background: '#fef3c7'}}>
+                        <h3>🗓️ Key Dates</h3>
+                        <p><strong>Student Holiday:</strong> 30 March - 07 April 2026</p>
+                        <p><strong>Mid-year Exams:</strong> 09 June - 27 June 2026</p>
+                        <p><strong>Student Holiday:</strong> 29 June - 10 July 2026</p>
+                        <p><strong>Teaching Practice:</strong> 21 July - 09 October 2026</p>
+                        <p><strong>End of Year Exams:</strong> 26 October - 21 November 2026</p>
+                    </div>
+                </div>
+            );
+        }
+        
+        function AssessmentsSection() {
+            return (
+                <div>
+                    <h2 className="section-title">📝 Assessments</h2>
+                    
+                    <div className="card" style={{background: '#fef3c7'}}>
+                        <h3>⚠️ Important: This is a NON-EXAMINABLE module</h3>
+                        <p>All assessments (assignments and test) are compulsory. These constitute your final mark.</p>
+                    </div>
+                    
+                    {courseData.assessments.map((assessment, idx) => (
+                        <div key={idx} className="card assignment-card">
+                            <h3>{assessment.name} ({assessment.type})</h3>
+                            <p><strong>Weight:</strong> {assessment.weight} ({assessment.marks} marks)</p>
+                            <p><strong>Due Date:</strong> <span className="due-date">{assessment.dueDate}</span></p>
+                            <p><strong>Description:</strong> {assessment.description}</p>
+                            
+                            {assessment.name === "Assignment 1" && (
+                                <div style={{marginTop: '12px', padding: '12px', background: '#dbeafe', borderRadius: '6px'}}>
+                                    <strong>Group Requirements:</strong>
+                                    <ul style={{marginLeft: '20px', marginTop: '8px'}}>
+                                        <li>5-7 students per group</li>
+                                        <li>10-slide engaging presentation</li>
+                                        <li>Canva may NOT be used</li>
+                                        <li>All members must participate</li>
+                                        <li>Failure to engage = 0 for activity</li>
+                                    </ul>
+                                </div>
+                            )}
+                            
+                            {assessment.name === "Test" && (
+                                <div style={{marginTop: '12px', padding: '12px', background: '#dbeafe', borderRadius: '6px'}}>
+                                    <strong>Test Details:</strong>
+                                    <ul style={{marginLeft: '20px', marginTop: '8px'}}>
+                                        <li>Time: 10h00 - 12h00</li>
+                                        <li>Venue: TBC</li>
+                                        <li>Covers Learning Units 1-4</li>
+                                        <li>Special test: 18 May 2026 (permission required)</li>
+                                    </ul>
+                                </div>
+                            )}
+                            
+                            {assessment.name === "Assignment 2" && (
+                                <div style={{marginTop: '12px', padding: '12px', background: '#dbeafe', borderRadius: '6px'}}>
+                                    <strong>Submission Requirements:</strong>
+                                    <ul style={{marginLeft: '20px', marginTop: '8px'}}>
+                                        <li>1. Educational technology tool used</li>
+                                        <li>2. How it relates to NS&T Intermediate Phase curriculum</li>
+                                        <li>3. How it supports teaching of NS&T curriculum</li>
+                                        <li>Peer evaluation: 13-16 May 2026</li>
+                                    </ul>
+                                </div>
+                            )}
+                        </div>
+                    ))}
+                    
+                    <div className="card">
+                        <h3>📊 Final Mark Calculation</h3>
+                        <p>Assignment 1: 20%</p>
+                        <p>Test: 50%</p>
+                        <p>Assignment 2: 30%</p>
+                        <p style={{marginTop: '12px', fontWeight: 'bold', color: '#1e40af'}}>Total: 100%</p>
+                    </div>
+                </div>
+            );
+        }
+        
+        function LearningUnitsSection() {
+            return (
+                <div>
+                    <h2 className="section-title">📚 Learning Units</h2>
+                    
+                    {courseData.learningUnits.map((unit, idx) => (
+                        <div key={idx} className="card">
+                            <h3>Learning Unit {unit.number}: {unit.title}</h3>
+                            
+                            <div style={{marginTop: '16px'}}>
+                                <strong>Topics Covered:</strong>
+                                <ul style={{marginLeft: '20px', marginTop: '8px'}}>
+                                    {unit.topics.map((topic, tidx) => (
+                                        <li key={tidx}>{topic}</li>
+                                    ))}
+                                </ul>
+                            </div>
+                            
+                            <div style={{marginTop: '16px'}}>
+                                <strong>Learning Outcomes:</strong>
+                                <ul style={{marginLeft: '20px', marginTop: '8px'}}>
+                                    {unit.outcomes.map((outcome, oidx) => (
+                                        <li key={oidx}>{outcome}</li>
+                                    ))}
+                                </ul>
+                            </div>
+                        </div>
+                    ))}
+                    
+                    <div className="card" style={{background: '#f0fdf4'}}>
+                        <h3>🎯 Graduate Attributes Developed</h3>
+                        <p>Throughout this module, you will develop:</p>
+                        <ul style={{marginLeft: '20px', marginTop: '8px'}}>
+                            <li><strong>Critical Thinking:</strong> Problem solving and analysis</li>
+                            <li><strong>Oral Communication:</strong> Presentations and discussions</li>
+                            <li><strong>Written Communication:</strong> Assignments and documentation</li>
+                            <li><strong>Subject Content Knowledge:</strong> NS&T Education expertise</li>
+                            <li><strong>Pedagogical Content Knowledge:</strong> Teaching strategies</li>
+                        </ul>
+                    </div>
+                </div>
+            );
+        }
+        
+        function ResourcesSection() {
+            return (
+                <div>
+                    <h2 className="section-title">📖 Resources & Readings</h2>
+                    
+                    <div className="card">
+                        <h3>📚 Required Readings</h3>
+                        <ul className="reading-list">
+                            {courseData.readings.map((reading, idx) => (
+                                <li key={idx} className="reading-item">{reading}</li>
+                            ))}
+                        </ul>
+                    </div>
+                    
+                    <div className="card">
+                        <h3>📄 Important Documents</h3>
+                        <ul style={{marginLeft: '20px'}}>
+                            <li>CAPS: Technology (Grades 4-6) - Available on Blackboard</li>
+                            <li>UFS Lesson Plan Template (Appendix A)</li>
+                            <li>Module Guide 2026</li>
+                            <li>Assessment Rubrics - Check Blackboard</li>
+                        </ul>
+                    </div>
+                    
+                    <div className="card">
+                        <h3>🔗 Online Resources</h3>
+                        <ul style={{marginLeft: '20px'}}>
+                            <li><strong>Blackboard:</strong> All lecture slides, readings, and announcements</li>
+                            <li><strong>UFS Library:</strong> Academic journals and research databases</li>
+                            <li><strong>CAPS Documents:</strong> Department of Basic Education website</li>
+                            <li><strong>Educational Technology Tools:</strong> Research various platforms for Assignment 2</li>
+                        </ul>
+                    </div>
+                    
+                    <div className="card" style={{background: '#fef3c7'}}>
+                        <h3>💡 Study Tips</h3>
+                        <ul style={{marginLeft: '20px'}}>
+                            <li>Read assigned articles BEFORE class for meaningful discussions</li>
+                            <li>Form study groups for collaborative learning</li>
+                            <li>Start assignments early - don't wait until due dates</li>
+                            <li>Use the AI Tutor for quick questions</li>
+                            <li>Attend all classes - content builds progressively</li>
+                            <li>Keep up with Blackboard announcements</li>
+                        </ul>
+                    </div>
+                </div>
+            );
+        }
+        
+        function FAQSection() {
+            const [openFAQ, setOpenFAQ] = useState(null);
+            
+            return (
+                <div>
+                    <h2 className="section-title">❓ Frequently Asked Questions</h2>
+                    
+                    {courseData.faqs.map((faq, idx) => (
+                        <div key={idx} className="faq-item">
+                            <div 
+                                className="faq-question" 
+                                onClick={() => setOpenFAQ(openFAQ === idx ? null : idx)}
+                            >
+                                {faq.question} {openFAQ === idx ? '▼' : '▶'}
+                            </div>
+                            {openFAQ === idx && (
+                                <div className="faq-answer">{faq.answer}</div>
+                            )}
+                        </div>
+                    ))}
+                    
+                    <div className="card" style={{marginTop: '24px', background: '#f0fdf4'}}>
+                        <h3>💬 Still Have Questions?</h3>
+                        <p>Try the AI Tutor for instant answers, or contact:</p>
+                        <p><strong>Prof. J.P.H. Pretorius</strong></p>
+                        <p>Email: pretoriusjph@ufs.ac.za</p>
+                        <p>Phone: 051 401 3340</p>
+                    </div>
+                </div>
+            );
+        }
+        
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>
